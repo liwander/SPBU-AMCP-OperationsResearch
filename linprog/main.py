@@ -1,4 +1,4 @@
-from simplex_mehtod import simplex_method
+from simplex_method import simplex_method
 
 
 c = [-2, -3, -4]
