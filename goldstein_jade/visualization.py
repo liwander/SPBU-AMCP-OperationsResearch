@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def plot_alg_analytics(jade_alg_analytics, filename='jade_analytics_data.png'):
-    fig = plt.figure()
+    fig = plt.figure(figsize=(12, 12))
     gs = fig.add_gridspec(len(jade_alg_analytics), 1, hspace=0.5)
     axs = gs.subplots()
 
