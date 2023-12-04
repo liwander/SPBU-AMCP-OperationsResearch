@@ -12,8 +12,8 @@ def get_default_params(dim: int) -> dict:
         Evolution Algorithm.
         :rtype dict
         """
-    pop_size = 10 * dim
-    return {'max_evals': 10000 * dim, 'individual_size': dim, 'callback': None,
+    pop_size = 20
+    return {'max_evals': 1000, 'individual_size': dim, 'callback': None,
             'population_size': pop_size, 'c': 0.1, 'p': max(.05, 3/pop_size), 'seed': None}
 
 
@@ -83,7 +83,9 @@ def apply(population_size: int, individual_size: int, bounds: np.ndarray,
     p = np.ones(population_size) * p
     fitness = commons.apply_fitness(population, func, opts)
     max_iters = max_evals // population_size
+    avg, median = [],[] 
     for current_generation in range(max_iters):
+
         # 2.1 Generate parameter values for current generation
         cr = np.random.normal(u_cr, 0.1, population_size)
         f = np.random.rand(population_size // 3) * 1.2
@@ -105,5 +107,11 @@ def apply(population_size: int, individual_size: int, bounds: np.ndarray,
         if callback is not None:
             callback(**(locals()))
 
+        median_individ = np.median(population, axis=0)
+        median.append(median_individ)
+        avg_individ = np.mean(population, axis=0)
+        avg.append(avg_individ)
+        # print(median_individ.shape)
+
     best = np.argmin(fitness)
-    return population[best], fitness[best]
+    return population[best], fitness[best], np.array(median), np.array(avg)
