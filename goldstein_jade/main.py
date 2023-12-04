@@ -1,6 +1,6 @@
 import jade
-import matplotlib.pyplot as plt
 import numpy as np
+from visualization import plot_alg_analytics
 
 def goldstein_price(varg : np.ndarray):
     x = varg[0]
@@ -26,29 +26,14 @@ seed = None
 res = jade.apply(population_size, individual_size, bounds, func, opts, p, c, callback, max_evals, seed)
 print(f'f minimum: {res[1]} at {res[0]}')
 
-
-alg_analytics = {'median individ' :res[2], 
+## random run data
+rand_run_alg_analytics = {'median individ' :res[2], 
                  'mean individ':res[3]}
 
-fig = plt.figure()
-gs = fig.add_gridspec(len(alg_analytics), 1, hspace=0.5)
-axs = gs.subplots()
+plot_alg_analytics(rand_run_alg_analytics, filename='random_run.png')
 
-for plot_ix, alg_analytics in enumerate(alg_analytics.items()):
-    analytics_name = alg_analytics[0]
-    data = alg_analytics[1]
-    axs[plot_ix].set_title(analytics_name)
-    axs[plot_ix].scatter(data[:, 0], data[:, 1], c=np.linspace(0, 1, data.shape[0]))
-    axs[plot_ix].set_xlim(-2, 2)
-    axs[plot_ix].set_ylim(-2, 2)
-    axs[plot_ix].set_xlabel('x')
-    axs[plot_ix].set_ylabel('y')
-    arrowprops = dict(arrowstyle='->', connectionstyle='arc3', facecolor='black')
-    axs[plot_ix].annotate('first iter', (data[0, 0], data[0, 1]), xytext=(-1.70, 1.70), arrowprops=arrowprops)
-    axs[plot_ix].annotate('last iter', (data[-1, 0], data[-1, 1]), xytext=(1.70, -1.70), arrowprops=arrowprops)
 
-plt.savefig('rand_run.png')
-
+## several runs average data
 marathon_len = 10
 marathon_analytics = {'median' : np.ndarray((marathon_len, max_evals // population_size, individual_size)),
                       'mean' : np.ndarray((marathon_len, max_evals // population_size, individual_size))}
@@ -64,21 +49,5 @@ marathon_mean = np.mean(marathon_analytics['mean'][:], axis=0)
 marathon_avg_run = {'mean_individ': marathon_mean,
                      'median_individ': marathon_median}
 
-fig = plt.figure()
-gs = fig.add_gridspec(len(marathon_avg_run), 1, hspace=0.5)
-axs = gs.subplots()
 
-for plot_ix, alg_analytics in enumerate(marathon_avg_run.items()):
-    analytics_name = alg_analytics[0]
-    data = alg_analytics[1]
-    axs[plot_ix].set_title(analytics_name)
-    axs[plot_ix].scatter(data[:, 0], data[:, 1], c=np.linspace(0, 1, data.shape[0]))
-    axs[plot_ix].set_xlim(-2, 2)
-    axs[plot_ix].set_ylim(-2, 2)
-    axs[plot_ix].set_xlabel('x')
-    axs[plot_ix].set_ylabel('y')
-    arrowprops = dict(arrowstyle='->', connectionstyle='arc3', facecolor='black')
-    axs[plot_ix].annotate('first iter', (data[0, 0], data[0, 1]), xytext=(-1.70, 1.70), arrowprops=arrowprops)
-    axs[plot_ix].annotate('last iter', (data[-1, 0], data[-1, 1]), xytext=(1.70, -1.70), arrowprops=arrowprops)
-
-plt.savefig('marathon_avg_run.png')
+plot_alg_analytics(marathon_avg_run, filename='marathon_avg_run')
