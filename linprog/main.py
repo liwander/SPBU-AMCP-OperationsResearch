@@ -1,7 +1,6 @@
 from simplex_method import simplex_method
+from visiualization import simplex_method_visualization
 import numpy as np
-from intvalpy  import lineqs
-import matplotlib as plt
 from gilp.simplex import LP
 import gilp
 
@@ -9,21 +8,23 @@ import gilp
 # A = [[1, 3, 2], [1, 5, 3]]
 # b = [10, 8]
 
-c = np.array([5, 3])
-A = np.array([[2, 1],
-              [1, 1],
-              [1, 0]])
-b = np.array([20, 16, 7])
+c = np.array([2, 3, 4])
+A = np.array([[3, 2, 1],
+              [2, 5, 3]])
+b = np.array([10, 15])
 
-print(simplex_method(c, A, b))
+# print(simplex_method(c, A, b))
+
+dim = c.shape[0]
+A_all = -np.vstack((A, -np.eye(dim)))
+B_all = -np.hstack((b, np.zeros(dim)))
+
+# print(A_all)
 
 b = np.transpose(b)
 c = np.transpose(c)
-
 lp = LP(A,b,c)
 # print(gilp.visualize.feasible_region(lp))
-gilp.visualize.simplex_visual(lp).show()
+# gilp.visualize.simplex_visual(lp).show()
 
-
-# m = size
-# print(lineqs(-A, -b))
+simplex_method_visualization(A_all, B_all, simplex_method(c, A, b))

@@ -2,15 +2,15 @@ import numpy as np
 np.set_printoptions(threshold=np.inf, linewidth=np.inf)
 from numpy.linalg import solve
 
-def current_optimal_solution(tableau):
+def basic_feasible_solution(tableau):
     optimal_solution = tableau[0, -1]
     opt_arg = np.array([])
-    for j in range(tableau.shape[1] - tableau.shape[0]):
-        xpos = np.where(tableau[1:, j] == 1)[0]
-        if xpos.size == 0:
-            opt_arg = np.append(opt_arg, 0)
-        else:
+    for j in range(tableau.shape[1] - 1):
+        xpos = np.nonzero(tableau[1:, j])[0]
+        if xpos.size == 1:
             opt_arg = np.append(opt_arg, tableau[int(xpos[0]) + 1, -1])
+        else:
+            opt_arg = np.append(opt_arg, 0)
     return optimal_solution, opt_arg
         
 def simplex_method(c, A, b):
@@ -28,14 +28,14 @@ def simplex_method(c, A, b):
 
 
     sepline = '=' * 10 + '\n'
-    print(tableau)
+    # print(tableau)
     # print(sepline)
     maxiter = 10
     it = 0
-    res = []
-    res = current_optimal_solution(tableau)
-    print(res)
-
+    opt_val = 0
+    vertex_bypass = []
+    vertex_bypass.append(basic_feasible_solution(tableau))
+    
     # print(tableau[0, :-(1 + len(b))])
     while np.any(tableau[0, 0:-1] < 0):
         it += 1
@@ -55,9 +55,9 @@ def simplex_method(c, A, b):
                 tableau[i, :] -= tableau[i, pivot_col] * tableau[pivot_row, :]
                 # print(f"tableau after pivoting:  \n{tableau}")
 
-        # print()
         # print(tableau)
-        res = current_optimal_solution(tableau)
-        # print(res)
 
-    return res
+        opt_val = basic_feasible_solution(tableau)
+        vertex_bypass.append((opt_val[0], opt_val[1]))
+
+    return vertex_bypass
