@@ -30,15 +30,15 @@ def simplex_method(c, A, b):
     sepline = '=' * 10 + '\n'
     # print(tableau)
     # print(sepline)
-    maxiter = 10
-    it = 0
+    # maxiter = 10
+    # it = 0
     opt_val = 0
     vertex_bypass = []
     vertex_bypass.append(basic_feasible_solution(tableau))
     
     # print(tableau[0, :-(1 + len(b))])
     while np.any(tableau[0, 0:-1] < 0):
-        it += 1
+        # it += 1
         pivot_col = np.argmin(tableau[0, 0:-1])
         indicator_col = tableau[1:, -1] / tableau[1:, pivot_col]
         pivot_row = np.where(indicator_col > 0, indicator_col, np.inf).argmin() + 1
@@ -58,6 +58,7 @@ def simplex_method(c, A, b):
         # print(tableau)
 
         opt_val = basic_feasible_solution(tableau)
+        # c = input()
         vertex_bypass.append((opt_val[0], opt_val[1]))
 
     return vertex_bypass

@@ -9,8 +9,8 @@ import gilp
 # b = [10, 8]
 
 c = np.array([2, 3, 4])
-A = np.array([[3, 2, 1],
-              [2, 5, 3]])
+A = np.array([[3, 2,  1],
+              [2,5, 3]])
 b = np.array([10, 15])
 
 # print(simplex_method(c, A, b))
