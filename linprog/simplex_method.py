@@ -31,17 +31,24 @@ def simplex_method(c, A, b):
     # print(tableau)
     # print(sepline)
     # maxiter = 10
-    # it = 0
+    it = 0
     opt_val = 0
     vertex_bypass = []
     vertex_bypass.append(basic_feasible_solution(tableau))
+
     
     # print(tableau[0, :-(1 + len(b))])
-    while np.any(tableau[0, 0:-1] < 0):
-        # it += 1
+    while np.any(tableau[0, 0:-1] < 0) and it < 10:
+        it += 1
+        # print(tableau)
         pivot_col = np.argmin(tableau[0, 0:-1])
         indicator_col = tableau[1:, -1] / tableau[1:, pivot_col]
-        pivot_row = np.where(indicator_col > 0, indicator_col, np.inf).argmin() + 1
+        # print(indicator_col)
+        filtered_indicator_col = np.where(indicator_col > 0, indicator_col, np.inf)
+        if filtered_indicator_col.shape[0] == 0:
+            print('infeasible')
+            return 
+        pivot_row = filtered_indicator_col.argmin() + 1
         # print(f"iteration initial tableau: \n{tableau}")
         # print(f'indicator column: \n{indicator_col}')
 
