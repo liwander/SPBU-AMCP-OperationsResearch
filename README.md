@@ -1,2 +1,2 @@
-1. LP. Simplex method
-2. JADE (tested on goldstein-price function) 
+1. LP. Simplex method. MipLib test 
+2. JADE (tested on goldstein-price function) . dimension 1000, stop criteria, confidence intervals(percentils), average
