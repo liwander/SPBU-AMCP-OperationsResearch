@@ -86,6 +86,8 @@ def apply(population_size: int, individual_size: int, bounds: np.ndarray,
     # max_iters = 10_000
     avg, median = [],[]
     fbest=[]
+    curmovingavg=0
+    prevmovingavg=0
     for current_generation in range(max_iters):
 
         # 2.1 Generate parameter values for current generation
@@ -115,6 +117,18 @@ def apply(population_size: int, individual_size: int, bounds: np.ndarray,
         avg.append(avg_func)
         # print(median_individ.shape)
         fbest.append(fitness[np.argmin(fitness)])
+        if len(fbest)!=3:
+            pass
+        else:
+            curmovingavg=np.ma.average(np.array(fbest[:-2]),axis=0)
+            print(curmovingavg, prevmovingavg)
+            if abs(curmovingavg-prevmovingavg)<1:
+                #print('break')
+                break
+            else:
+                prevmovingavg = curmovingavg
+                #print('не break',prevmovingavg,curmovingavg)
+
 
     best = np.argmin(fitness)
     return population[best], fitness[best], np.array(median), np.array(fbest)
