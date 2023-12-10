@@ -1,5 +1,7 @@
 import jade
 import numpy as np
+import scipy.stats as stats
+import matplotlib.pyplot as plt
 from visualization import plot_alg_analytics
 from functools import reduce
 from operator import mul
@@ -24,13 +26,13 @@ def rosenbrock(args):
 def sphere(args):
     return sum(map(lambda x: x**2, args))
 
-dim = int(1000)
+dim = int(10)
 params = jade.get_default_params(dim)
 
 
 population_size = params['population_size']
 individual_size = params['individual_size']
-bounds = np.array([[-1e2, 1e2]] * dim)
+bounds = np.array([[-10, 10]] * dim)
 # print(bounds)
 func = sphere
 opts = None
@@ -41,11 +43,11 @@ max_evals = params['max_evals']
 seed = None
 
 res = jade.apply(population_size, individual_size, bounds, func, opts, p, c, callback, max_evals, seed)
-print(f'f minimum: {res[1]} at {res[0]}')
+print(f'f minimum: {res[1]}, mean: {res[2]}')
 
 ## random run data
-rand_run_alg_analytics = {'median individ' :res[2], 
-                 'mean individ':res[3]}
+#rand_run_alg_analytics = {'median individ' :res[2],
+#               'mean individ':res[3]}
 
 # print(rand_run_alg_analytics['mean individ'])
 
@@ -54,19 +56,30 @@ rand_run_alg_analytics = {'median individ' :res[2],
 
 ## several runs average data
 marathon_len = 10
-marathon_analytics = {'median' : np.ndarray((marathon_len, max_evals // population_size, individual_size)),
-                      'mean' : np.ndarray((marathon_len, max_evals // population_size, individual_size))}
+marathon_analytics = {'median' : np.ndarray((marathon_len, max_evals // population_size)),
+                      'mean' : np.ndarray((marathon_len, max_evals // population_size))}
 
 for run_number in range(marathon_len):
     run_res = jade.apply(population_size, individual_size, bounds, func, opts, p, c, callback, max_evals, seed)
-    marathon_analytics['median'][run_number] = run_res[2]
+    #marathon_analytics['median'][run_number] = run_res[2]
     marathon_analytics['mean'][run_number] = run_res[3]
 
-marathon_median = np.mean(marathon_analytics['median'][:], axis=0)
+#marathon_median = np.mean(marathon_analytics['median'][:], axis=0)
 marathon_mean = np.mean(marathon_analytics['mean'][:], axis=0) 
 
-marathon_avg_run = {'mean_individ': marathon_mean,
-                     'median_individ': marathon_median}
-
+data=marathon_analytics['mean']
+confidence = 0.95
+mean = np.mean(data,axis=0)
+sem = stats.sem(data,axis=0)
+interval = stats.t.interval(confidence, len(data) - 1, loc=mean, scale=sem)
+fig,ax = plt.subplots(figsize=(10, 6))
+ax.plot(np.array(range(mean.shape[0])), mean,color='green')
+ax.fill_between(x=np.array(range(mean.shape[0])), y1=interval[1]+mean, y2=interval[0]-mean, color='green', alpha=0.15, label='95% Доверительный интервал')
+plt.xlabel('Поколения')
+plt.ylabel('Значения функции')
+ax.plot(np.array(range(mean.shape[0])), [0]*mean.shape[0], color='red', linestyle= '--')
+ax.legend()
+plt.show()
+plt.close()
 
 # plot_alg_analytics(marathon_avg_run, filename='marathon_avg_run')
