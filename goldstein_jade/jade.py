@@ -13,7 +13,7 @@ def get_default_params(dim: int) -> dict:
         :rtype dict
         """
     pop_size = 20
-    return {'max_evals': 1000, 'individual_size': dim, 'callback': None,
+    return {'max_evals': 1_000_000_00, 'individual_size': dim, 'callback': None,
             'population_size': pop_size, 'c': 0.1, 'p': max(.05, 3/pop_size), 'seed': None}
 
 
@@ -83,6 +83,7 @@ def apply(population_size: int, individual_size: int, bounds: np.ndarray,
     p = np.ones(population_size) * p
     fitness = commons.apply_fitness(population, func, opts)
     max_iters = max_evals // population_size
+    # max_iters = 10_000
     avg, median = [],[] 
     for current_generation in range(max_iters):
 

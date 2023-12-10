@@ -5,9 +5,9 @@ from gilp.simplex import LP
 import gilp
 from read_problem_coefs import read_mps
 
-# c = [-8,-10, -7]
-# A = [[1, 3, 2], [1, 5, 3]]
-# b = [10, 8]
+c = np.array([2,3, 4])
+A = np.array([[3, 2, 1], [2, 5, 3]])
+b = np.array([10, 15])
 
 # c = np.array([2, 3, 4])
 # A = np.array([[3, 2,  1],
@@ -19,19 +19,22 @@ from read_problem_coefs import read_mps
 # A = np.array([[-1, 0], [0, -1], [1, 1]])
 # b = np.array([-6, -6, 11])
 
-# print(simplex_method(c, A, b))
+# print()
+simplex_method_visualization(A, b, simplex_method(c, A, b))
+# print(gilp.visualize.feasible_region(lp))
 
-# dim = c.shape[0]
-# A_all = -np.vstack((A, -np.eye(dim)))
-# B_all = -np.hstack((b, np.zeros(dim)))
+dim = c.shape[0]
+A_all = -np.vstack((A, -np.eye(dim)))
+B_all = -np.hstack((b, np.zeros(dim)))
 
 # # print(A_all)
 
 # b = np.transpose(b)
 # c = np.transpose(c)
 # lp = LP(A,b,c)
-# print(gilp.visualize.feasible_region(lp))
 # gilp.visualize.simplex_visual(lp).show()
+
+simplex_method_visualization(A_all, B_all, simplex_method(c, A, b))
 
 filedir = '/home/anver/Projects/OperationsResearch/SPBU-AMCP-OperationsResearch/linprog/test_problems/'
 filenames = ['b-ball.mps', 'enlight8.mps', 'neos-1425699.mps']
