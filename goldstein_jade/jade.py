@@ -12,8 +12,8 @@ def get_default_params(dim: int) -> dict:
         Evolution Algorithm.
         :rtype dict
         """
-    pop_size = 20
-    return {'max_evals': 1_000_000_00, 'individual_size': dim, 'callback': None,
+    pop_size = 20*dim
+    return {'max_evals': 1_000*dim, 'individual_size': dim, 'callback': None,
             'population_size': pop_size, 'c': 0.1, 'p': max(.05, 3/pop_size), 'seed': None}
 
 
@@ -84,7 +84,8 @@ def apply(population_size: int, individual_size: int, bounds: np.ndarray,
     fitness = commons.apply_fitness(population, func, opts)
     max_iters = max_evals // population_size
     # max_iters = 10_000
-    avg, median = [],[] 
+    avg, median = [],[]
+    fbest=[]
     for current_generation in range(max_iters):
 
         # 2.1 Generate parameter values for current generation
@@ -108,11 +109,12 @@ def apply(population_size: int, individual_size: int, bounds: np.ndarray,
         if callback is not None:
             callback(**(locals()))
 
-        median_individ = np.median(population, axis=0)
-        median.append(median_individ)
-        avg_individ = np.mean(population, axis=0)
-        avg.append(avg_individ)
+        median_func = np.median(fitness, axis=0)
+        median.append(median_func)
+        avg_func = np.mean(fitness, axis=0)
+        avg.append(avg_func)
         # print(median_individ.shape)
+        fbest.append(fitness[np.argmin(fitness)])
 
     best = np.argmin(fitness)
-    return population[best], fitness[best], np.array(median), np.array(avg)
+    return population[best], fitness[best], np.array(median), np.array(fbest)
