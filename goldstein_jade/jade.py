@@ -13,7 +13,7 @@ def get_default_params(dim: int) -> dict:
         :rtype dict
         """
     pop_size = 20*dim
-    return {'max_evals': 1_0000*dim, 'individual_size': dim, 'callback': None,
+    return {'max_evals': 2_0000*dim, 'individual_size': dim, 'callback': None,
             'population_size': pop_size, 'c': 0.1, 'p': max(.05, 3/pop_size), 'seed': None}
 
 
@@ -117,14 +117,16 @@ def apply(population_size: int, individual_size: int, bounds: np.ndarray,
         avg.append(avg_func)
         # print(median_individ.shape)
         fbest.append(fitness[np.argmin(fitness)])
-        print(fitness[np.argmin(fitness)])
+        # print(fitness[np.argmin(fitness)])
 
         cur_moving_avg=np.ma.average(np.array(population),axis=0)
-        if np.linalg.norm(cur_moving_avg-prev_moving_avg)<1e-6:
+        if np.linalg.norm(cur_moving_avg-prev_moving_avg)<0.7e-1:
             break
         else:
             prev_moving_avg = cur_moving_avg
-            
-    print('\n\n\n ', current_generation)
+
     best = np.argmin(fitness)
-    return population[best], fitness[best], np.array(median), np.array(fbest)
+    return {'optimum_point': population[best],
+            'optimum_value': fitness[best],
+            'gen_mean_fval': np.array(avg_func),
+            'gen_best_fval': np.array(fbest)}

@@ -26,7 +26,7 @@ def rosenbrock(args):
 def sphere(args):
     return sum(map(lambda x: x**2, args))
 
-dim = int(2)
+dim = int(10)
 params = jade.get_default_params(dim)
 
 
@@ -35,6 +35,7 @@ individual_size = params['individual_size']
 bounds = np.array([[-10, 10]] * dim)
 # print(bounds)
 func = sphere
+func_min = 0
 opts = None
 p = params['p']
 c = params['c']
@@ -42,8 +43,8 @@ callback = params['callback']
 max_evals = params['max_evals']
 seed = None
 
-res = jade.apply(population_size, individual_size, bounds, func, opts, p, c, callback, max_evals, seed)
-print(f'f minimum: {res[1]}, mean: {res[2]} at {res[0]}')
+# res = jade.apply(population_size, individual_size, bounds, func, opts, p, c, callback, max_evals, seed)
+# print(f"f minimum: {res['optimum_value']}, mean: {res['gen_mean_fval']} at {res['optimum_point']}")
 
 ## random run data
 #rand_run_alg_analytics = {'median individ' :res[2],
@@ -53,21 +54,25 @@ print(f'f minimum: {res[1]}, mean: {res[2]} at {res[0]}')
 
 # plot_alg_analytics(rand_run_alg_analytics, filename='random_run.png')
 
-'''
+
 ## several runs average data
-marathon_len = 10
-marathon_analytics = {'median' : np.ndarray((marathon_len, max_evals // population_size)),
-                      'mean' : np.ndarray((marathon_len, max_evals // population_size))}
+marathon_len = 100
+marathon_analytics = {'median' : np.ones((marathon_len, max_evals // population_size)),
+                      'mean' : func_min * np.ones((marathon_len, max_evals // population_size))}
+
+runs_generation_count = np.zeros(shape=(1, marathon_len))
 
 for run_number in range(marathon_len):
+    # print(run_number+1)
     run_res = jade.apply(population_size, individual_size, bounds, func, opts, p, c, callback, max_evals, seed)
     #marathon_analytics['median'][run_number] = run_res[2]
-    marathon_analytics['mean'][run_number] = run_res[3]
+    runs_generation_count[0, run_number] = run_res['gen_best_fval'].shape[0]
+    marathon_analytics['mean'][run_number][:run_res['gen_best_fval'].shape[0]] = run_res['gen_best_fval']
 
 #marathon_median = np.mean(marathon_analytics['median'][:], axis=0)
 marathon_mean = np.mean(marathon_analytics['mean'][:], axis=0) 
 
-data=marathon_analytics['mean']
+data=marathon_analytics['mean'][:, :int(np.max(runs_generation_count))]
 confidence = 0.95
 mean = np.mean(data,axis=0)
 sem = stats.sem(data,axis=0)
@@ -79,7 +84,7 @@ plt.xlabel('Поколения')
 plt.ylabel('Значения функции')
 ax.plot(np.array(range(mean.shape[0])), [0]*mean.shape[0], color='red', linestyle= '--')
 ax.legend()
-# plt.show()
+plt.show()
 plt.close()
-'''
+
 # plot_alg_analytics(marathon_avg_run, filename='marathon_avg_run')
