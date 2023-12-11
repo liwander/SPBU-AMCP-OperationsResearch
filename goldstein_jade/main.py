@@ -56,7 +56,7 @@ seed = None
 
 
 ## several runs average data
-marathon_len = 100
+marathon_len = 10
 marathon_analytics = {'median' : np.ones((marathon_len, max_evals // population_size)),
                       'mean' : func_min * np.ones((marathon_len, max_evals // population_size))}
 
@@ -77,13 +77,14 @@ confidence = 0.95
 mean = np.mean(data,axis=0)
 sem = stats.sem(data,axis=0)
 interval = stats.t.interval(confidence, len(data) - 1, loc=mean, scale=sem)
-fig,ax = plt.subplots(figsize=(10, 6))
+fig,ax = plt.subplots(figsize=(20, 8))
 ax.plot(np.array(range(mean.shape[0])), mean,color='green')
 ax.fill_between(x=np.array(range(mean.shape[0])), y1=interval[1]+mean, y2=interval[0]-mean, color='green', alpha=0.15, label='95% Доверительный интервал')
 plt.xlabel('Поколения')
 plt.ylabel('Значения функции')
-ax.plot(np.array(range(mean.shape[0])), [0]*mean.shape[0], color='red', linestyle= '--')
+ax.plot(np.array(range(mean.shape[0])), [func_min]*mean.shape[0], color='red', linestyle= '--')
 ax.legend()
+plt.savefig('./confidence_interval.png', bbox_inches='tight')
 plt.show()
 plt.close()
 
