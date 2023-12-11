@@ -26,7 +26,7 @@ def rosenbrock(args):
 def sphere(args):
     return sum(map(lambda x: x**2, args))
 
-dim = int(10)
+dim = int(2)
 params = jade.get_default_params(dim)
 
 
@@ -43,7 +43,7 @@ max_evals = params['max_evals']
 seed = None
 
 res = jade.apply(population_size, individual_size, bounds, func, opts, p, c, callback, max_evals, seed)
-print(f'f minimum: {res[1]}, mean: {res[2]}')
+print(f'f minimum: {res[1]}, mean: {res[2]} at {res[0]}')
 
 ## random run data
 #rand_run_alg_analytics = {'median individ' :res[2],
@@ -53,7 +53,7 @@ print(f'f minimum: {res[1]}, mean: {res[2]}')
 
 # plot_alg_analytics(rand_run_alg_analytics, filename='random_run.png')
 
-
+'''
 ## several runs average data
 marathon_len = 10
 marathon_analytics = {'median' : np.ndarray((marathon_len, max_evals // population_size)),
@@ -79,7 +79,7 @@ plt.xlabel('Поколения')
 plt.ylabel('Значения функции')
 ax.plot(np.array(range(mean.shape[0])), [0]*mean.shape[0], color='red', linestyle= '--')
 ax.legend()
-plt.show()
+# plt.show()
 plt.close()
-
+'''
 # plot_alg_analytics(marathon_avg_run, filename='marathon_avg_run')

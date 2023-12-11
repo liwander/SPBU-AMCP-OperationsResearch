@@ -13,7 +13,7 @@ def get_default_params(dim: int) -> dict:
         :rtype dict
         """
     pop_size = 20*dim
-    return {'max_evals': 1_000*dim, 'individual_size': dim, 'callback': None,
+    return {'max_evals': 1_0000*dim, 'individual_size': dim, 'callback': None,
             'population_size': pop_size, 'c': 0.1, 'p': max(.05, 3/pop_size), 'seed': None}
 
 
@@ -86,8 +86,8 @@ def apply(population_size: int, individual_size: int, bounds: np.ndarray,
     # max_iters = 10_000
     avg, median = [],[]
     fbest=[]
-    curmovingavg=0
-    prevmovingavg=0
+    prev_moving_avg=np.zeros(shape=(1, individual_size))
+    cur_moving_avg=prev_moving_avg
     for current_generation in range(max_iters):
 
         # 2.1 Generate parameter values for current generation
@@ -117,18 +117,14 @@ def apply(population_size: int, individual_size: int, bounds: np.ndarray,
         avg.append(avg_func)
         # print(median_individ.shape)
         fbest.append(fitness[np.argmin(fitness)])
-        if len(fbest)!=3:
-            pass
+        print(fitness[np.argmin(fitness)])
+
+        cur_moving_avg=np.ma.average(np.array(population),axis=0)
+        if np.linalg.norm(cur_moving_avg-prev_moving_avg)<1e-6:
+            break
         else:
-            curmovingavg=np.ma.average(np.array(fbest[:-2]),axis=0)
-            print(curmovingavg, prevmovingavg)
-            if abs(curmovingavg-prevmovingavg)<1:
-                #print('break')
-                break
-            else:
-                prevmovingavg = curmovingavg
-                #print('не break',prevmovingavg,curmovingavg)
-
-
+            prev_moving_avg = cur_moving_avg
+            
+    print('\n\n\n ', current_generation)
     best = np.argmin(fitness)
     return population[best], fitness[best], np.array(median), np.array(fbest)
