@@ -13,7 +13,7 @@ def get_default_params(dim: int) -> dict:
         :rtype dict
         """
     pop_size = 20*dim
-    return {'max_evals': 2_0000*dim, 'individual_size': dim, 'callback': None,
+    return {'max_evals': 2_000000*dim, 'individual_size': dim, 'callback': None,
             'population_size': pop_size, 'c': 0.1, 'p': max(.05, 3/pop_size), 'seed': None}
 
 
@@ -120,7 +120,7 @@ def apply(population_size: int, individual_size: int, bounds: np.ndarray,
         # print(fitness[np.argmin(fitness)])
 
         cur_moving_avg=np.ma.average(np.array(population),axis=0)
-        if np.linalg.norm(cur_moving_avg-prev_moving_avg)<0.7e-1:
+        if np.linalg.norm(cur_moving_avg-prev_moving_avg)<1e-3:
             break
         else:
             prev_moving_avg = cur_moving_avg
