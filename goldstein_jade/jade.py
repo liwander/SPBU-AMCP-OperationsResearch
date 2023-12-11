@@ -120,10 +120,9 @@ def apply(population_size: int, individual_size: int, bounds: np.ndarray,
         # print(fitness[np.argmin(fitness)])
 
         cur_moving_avg=np.ma.average(np.array(population),axis=0)
-        if np.linalg.norm(cur_moving_avg-prev_moving_avg)<1e-3:
+        if np.linalg.norm(cur_moving_avg-prev_moving_avg)< 1e-3:
             break
-        else:
-            prev_moving_avg = cur_moving_avg
+        prev_moving_avg = cur_moving_avg
 
     best = np.argmin(fitness)
     return {'optimum_point': population[best],
